@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'bootswatch/dist/quartz/bootstrap.min.css';
 import { AuthProvider } from './ruteo/AuthContext';
+
+//import 'bootswatch/dist/solar/bootstrap.min.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

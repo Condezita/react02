@@ -4,7 +4,9 @@ const ListaDeProfesores = () => {
   return (
     <div id="sis">
       <h1>ListaDeProfesores</h1>
-      Lisat de profesores...
+      Lisat de Deportes...
+      <p>Hola</p>
+      
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import { Routes, Route, Outlet, Switch, Redirect} from 'react-router-dom';
-
+   
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { getAuth, signOut } from 'firebase/auth';
-//import "./BarraNavegacion.css";
+import "./BarraNavegacion.css";
 import { useNavigate } from 'react-router-dom';
 
 ///////////////// PROTEGIDA - SistemaCRUD //////////////
@@ -15,9 +15,17 @@ import ListaDeAlumnos from '../protegido/sistemacrud/ListaDeAlumnos';
 import SistemaFILE from '../protegido/SistemaFILE';
 import Fotos from '../protegido/sistemafile/Fotos';
 
+
 //////////////////////// PAG. PUBLICOS /////////////////
 import RegisterForm from '../login/RegisterForm';
 import LoginForm from '../login/LoginForm';
+import AppLista from '../protegido/sistemacrud/AppLista';
+import ListaDeProfesores from '../protegido/sistemacrud/ListaDeProfesores';
+import Documentos from '../protegido/sistemafile/Documentos';
+import ListaDeDeportes from '../protegido/sistemacrud/ListaDeDeportes';
+import ListaDeCarreras from '../protegido/sistemacrud/ListaDeCarreras';
+import Pdf from '../protegido/sistemafile/Pdf';
+import Videos from '../protegido/sistemafile/Videos';
 
 const BarraRutasProtected = () => {
     const { user } = useAuth();
@@ -25,6 +33,16 @@ const BarraRutasProtected = () => {
     const navigate = useNavigate();
   
     const handleSignOut = () => {
+      if (user) {
+        signOut(auth)
+          .then(() => {
+            // Cierre de sesión exitoso
+            navigate('/home'); // Redirigir a ruta /home
+          })
+          .catch((error) => {
+            console.error('Error al cerrar sesión:', error);
+          });
+      }
     }
   
     return (
@@ -41,9 +59,16 @@ const BarraRutasProtected = () => {
               
           <div id="menu">
             <ul>
-              <li><Link to="/sistema-crud/alumnos">Alumnos</Link> </li>
-                      
-              <li><Link to="/sistema-file/fotos">Fotos</Link> </li>
+              <li><Link to="/sistema-crud/applista">Alumnos(App-Lista)</Link> </li>
+              <li><Link to="/sistema-crud/prof">Profesores</Link> </li>
+              <li><Link to="/sistema-crud/depor">Deportes</Link> </li>
+              <li><Link to="/sistema-crud/carre">Carreras</Link> </li>
+
+              <li><Link to="/sistema-file/fotos">Galeria de Fotos</Link> </li>
+              <li><Link to="/sistema-file/docword">Doc.Pdf</Link> </li>
+              <li><Link to="/sistema-file/videos">Videos</Link> </li>
+              <li><Link to="/sistema-file/docword">Doc. word</Link> </li>
+              
             </ul>
           </div>
         </nav>
@@ -56,13 +81,20 @@ const BarraRutasProtected = () => {
           
           <Route path="/sistema-crud" element={<MarcoParaSistemaCRUD />}>
             <Route index element={<SistemaCRUD />} />
-            <Route path="applista" element={<ListaDeAlumnos />} />
+            <Route path="applista" element={<AppLista />} />
+            <Route path="prof" element={<ListaDeProfesores />} />
+            <Route path="depor" element={<ListaDeDeportes />} />
+            <Route path="carre" element={<ListaDeCarreras />} />
+            
           </Route>
   
   
           <Route path="/sistema-file" element={<MarcoParaSistemaFILE />}>
             <Route index element={<SistemaFILE />} />
             <Route path="fotos" element={<Fotos />} />
+            <Route path="docword" element={<Documentos />} />
+            <Route path="Pdf" element={<Pdf />} />
+            <Route path="Videos" element={<Videos />} />
           </Route>
   
         </Routes>        
@@ -127,4 +159,3 @@ function MarcoParaSistemaFILE() {
       }
     }
   */
-  

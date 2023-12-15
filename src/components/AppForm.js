@@ -1,30 +1,30 @@
-import React, { useEffect } from 'react'
-import { db } from '../firebase/firebase'
-import { useState } from 'react'
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore'
+import React, { useEffect } from 'react';
+import { db } from './firebase';
+import { useState } from 'react';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+
 
 const AppForm = (props) => {
-  ///////////////////// GUARDAR / ACTUALIZAR /////////////////
-  const camposRegistro = { nombre:"", edad:"", genero:"" }
+  
+  ///////////// GUARDAR / ACTUALIZAR ////////
+  const camposRegistro = { nombre:"", edad:"", genero:""}
   const [objeto, setObjeto] = useState(camposRegistro);
+  //console.log(objeto);
 
-  const manejarEnvios = async (e) => {
+  const handleSubmit = async (e) => {   //manejador de submit
     e.preventDefault();
-
     try {
-      if(props.idActual === "") {
-      }else{
-        await updateDoc(doc(collection(db, "persona"), props.idActual),objeto);
-        props.setIdactual('');
-
-    }
-        
+      if(props.idActual === ""){      ///GUARDAR
         if(validarForm()){
-          addDoc(collection(db, 'persona'), objeto);  
-          console.log("Se guardo con éxito...");
-        
-      }else{
-        console.log("Actualizando en BD");
+          addDoc(collection(db, 'persona'), objeto);
+          console.log("Se guardo con exito");
+        }else{
+          console.log("No se guardo");
+        }
+      }else{                          //actualizar
+        await updateDoc(doc(collection(db, "persona"), props.idActual), objeto);
+        alert("Se actualizo");
+        props.setIdActual('');
       }
       setObjeto(camposRegistro);
     } catch (error) {
@@ -32,34 +32,26 @@ const AppForm = (props) => {
     }
   }
 
+  //Manejedor del estado de cambios
+  const handleStatusChange = (e) => {
+    const {name, value} = e.target;
+    setObjeto({...objeto, [name]: value});
+    //console.log({name, value});
+  }
+
+  // Validación
   const validarForm = () => {
-    if(objeto.nombre === "" || /^\s+/.test(objeto.nombre)){
+    if(objeto.nombre === ""){
       alert("Escriba nombre...");
       return false;
     }
 
-    if(objeto.edad === "" || /^\s+/.test(objeto.edad)){
-      alert("Escriba edad...");
-      return false;
-    }
-
-    if(objeto.genero === "" || /^\s+/.test(objeto.genero)){
-      alert("Seleccionar genero...");
-      return false;
-    }
-    //
     return true;
   }
 
-  const manejarCambiosEntrada = (e) => {
-    //console.log(e.target.value);        //Obtiene valor ingresado
-    const {name, value} = e.target;       //name, value recibe de target
-    console.log(name, value);             //obtiene name y value
-    setObjeto({...objeto, [name]: value});//agrega a objeto name y value
-  }
-  ///////////obtener datos de base datos por aid //////////////
-  useEffect(()=>{
-    if(props.idActual === ""){
+  ///////// Obtener datos de BD ////////
+  useEffect(() => {
+    if(props.idActual===""){
       setObjeto({...camposRegistro});
     }else{
       obtenerDatosPorId(props.idActual);
@@ -67,35 +59,38 @@ const AppForm = (props) => {
   }, [props.idActual]);
 
   const obtenerDatosPorId = async (xId) => {
-      const objPorId = doc(db, "persona", xId)
-      const docPorId  = await getDoc(objPorId);
-      if(docPorId.exists()){
-        setObjeto(docPorId.data());
-      }else{
-        console.log("No hay documentos")
-      }
+    const objPorId = doc(db, "persona", xId);
+    const docPorId = await getDoc(objPorId);
+    if(docPorId.exists()){
+      setObjeto(docPorId.data());
+    }else{
+      alert("No hay doc...");
+      //console.log("No hay doc...");
+    }
   }
-  
-
-
-
 
 
   return (
     <div style={{background:"orange", padding:"10px", textAlign:"center"}}>
-      <form onSubmit={manejarEnvios} >
-        <h>AppForm.js</h> <br/>
-        <input onChange={manejarCambiosEntrada} value={objeto.nombre} 
-          name='nombre' type='text' placeholder='Nombres...' /><br/>
+      <form onSubmit={handleSubmit}>
+        <h1>AppForm.js</h1>
 
-        <input onChange={manejarCambiosEntrada} value={objeto.edad} 
-          name='edad'   type='text' placeholder='Edad...' /><br/>
+        <input onChange={handleStatusChange} 
+         value={objeto.nombre} name='nombre' 
+         type='text' placeholder='Nombre...' /> <br/>
 
-        <input onChange={manejarCambiosEntrada} value={objeto.genero} 
-          name='genero' type='text' placeholder='Género...' /><br/>
+        <input onChange={handleStatusChange} 
+         value={objeto.edad} name='edad' 
+         type='text' placeholder='Edad...' /> <br/>
 
+        <select onChange={handleStatusChange} 
+          name='genero' value={objeto.genero} > 
+          <option value="">Seleccione género...</option>
+          <option value="M"> Masculino </option>
+          <option value="F"> Femenino </option>
+        </select> <br />
         <button>
-          { props.idActual===""? "Guardar": "Actualizar" }
+          {props.idActual === "" ? "Guardar" : "Actualizar"}
         </button>
       </form>
     </div>
