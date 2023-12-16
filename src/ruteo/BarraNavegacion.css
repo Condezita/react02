@@ -1,0 +1,19 @@
+nav ul {display: inline; list-style: none; }
+nav li {padding-right: 10px;}
+#login, #menu {padding: 10px;}
+
+#login{ background: rgb(248, 104, 104); }
+#login ul li{float: inline-end;}
+
+#menu{background: rgb(250, 157, 157)}
+#menu ul li{float: inline-start;}
+
+#sis {background: yellow;}
+
+#file {background: rgb(255, 80, 203)}  /* mediumorchid; darkgreen*/
+
+#public { background:  slateblue; }
+
+@media (max-width: 600px){
+  #login, #menu{display: grid; }
+}
